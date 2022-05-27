@@ -9,3 +9,6 @@ Day 8 challenge of 21-days coding challenge
 ![Day 8 Challenge](./htmlcanvas.jpg "HTML Canvas")
 
 Project link: [HTML Canvas](https://smtoyedeji.github.io/javascript21-8.github.io/)
+
+**Project Roadmap**
+Make canvas work on mobile browsers
