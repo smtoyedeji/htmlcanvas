@@ -53,26 +53,10 @@ canvas.addEventListener("mouseup", () => isDrawing = false)
 canvas.addEventListener("mouseout", () => isDrawing = false)
 
 //canvas on mobile
-document.body.addEventListener("touchstart", function (e) {
-    if (e.target == canvas) {
-     e.preventDefault();
-     clientX = e.touches[0].clientX;
-     clientY = e.touches[0].clientY; 
-     isDrawing=true;
-     draw(clientX, clientY)
-    }
-  }, false);
-  document.body.addEventListener("touchend", function (e) {
-    if (e.target == canvas) {
-      e.preventDefault();
-      isDrawing=false;
-    }
-  }, false);
-  document.body.addEventListener("touchmove", function (e) {
-    if (e.target == canvas) {
-      e.preventDefault();
-      clientX = e.touches[0].clientX;
-      clientY = e.touches[0].clientY;
-      draw(clientX, clientY)
-    }
-  }, false);
+document.body.addEventListener("touchstart", (e) => {
+    isDrawing = true;
+    lastX = e.offsetX;
+    lastY = e.offsetY;
+    document.body.addEventListener("touchend", () => isDrawing = false);
+    document.body.addEventListener("touchmove", draw)
+})
