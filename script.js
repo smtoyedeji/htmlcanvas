@@ -23,10 +23,12 @@ function draw(e) {
     ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
     ctx.beginPath();
     ctx.moveTo(lastX, lastY)
-    ctx.lineTo(e.offsetX, e.offsetY);
+    ctx.lineTo(clientX, clientY);
     ctx.stroke();
-    lastX = e.offsetX;
-    lastY = e.offsetY;
+    lastX = clientX;
+    lastY = clientY;
+    // lastX=e.offsetX;
+    // lastY=e.offsetY;
     hue++;
     if (hue >= 360) {
         hue = 0;
@@ -43,20 +45,41 @@ function draw(e) {
 
 }
 
-canvas.addEventListener("mousemove", draw)
-canvas.addEventListener("mousedown", (e) => {
-    isDrawing = true;
-    lastX = e.offsetX;
-    lastY = e.offsetY;
-})
-canvas.addEventListener("mouseup", () => isDrawing = false)
-canvas.addEventListener("mouseout", () => isDrawing = false)
+// canvas.addEventListener("mousemove", draw)
+// canvas.addEventListener("mousedown", (e) => {
+//     isDrawing = true;
+//     lastX = e.offsetX;
+//     lastY = e.offsetY;
+// })
+// canvas.addEventListener("mouseup", () => isDrawing = false)
+// canvas.addEventListener("mouseout", () => isDrawing = false)
 
 //canvas on mobile
-document.body.addEventListener("touchstart", (e) => {
+canvas.addEventListener("touchstart", (e) => {
+    console.log(e.touches)
+    e.preventDefault();
     isDrawing = true;
-    lastX = e.offsetX;
-    lastY = e.offsetY;
-    document.body.addEventListener("touchend", () => isDrawing = false);
-    document.body.addEventListener("touchmove", draw)
-})
+    clientX = e.touches[0].clientX;
+    clientY = e.touches[0].clientY;
+    // isDrawing = true;
+    draw(clientX, clientY)
+}, false)
+
+canvas.addEventListener("touchend", (e) => {
+    // console.log(e);
+    e.preventDefault();
+    let deltaX;
+    let deltaY;
+    deltaX = e.changedTouches[0].clientX - clientX;
+    deltaY = e.changedTouches[0].clientY - clientY;
+    isDrawing = false;
+}, false);
+
+canvas.addEventListener("touchmove", (e) => {
+    console.log(e)
+    e.preventDefault();
+    let clientX = e.touches[0].clientX;
+    let clientY = e.touches[0].clientY;
+    isDrawing = true;
+    draw(clientX, clientY)
+}, false)
