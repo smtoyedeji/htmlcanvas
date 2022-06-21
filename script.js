@@ -19,14 +19,22 @@ let hue = 0;
 let direction = true;
 
 function draw(e) {
-    if(!isDrawing) return;
+    if (!isDrawing) return;
     ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
     ctx.beginPath();
-    ctx.moveTo(lastX, lastY)
-    ctx.lineTo(clientX, clientY);
-    ctx.stroke();
-    lastX = clientX;
-    lastY = clientY;
+    ctx.moveTo(lastX, lastY);
+    if (isTouchScreendevice()) {
+        ctx.lineTo(clientX, clientY);
+        ctx.stroke();
+        lastX = clientX;
+        lastY = clientY;
+    } else {
+        ctx.lineTo(e.offsetX, e.offsetY);
+        ctx.stroke();
+        lastX = e.offsetX;
+        lastY = e.offsetY;
+    }
+    
     // lastX=e.offsetX;
     // lastY=e.offsetY;
     hue++;
@@ -45,41 +53,45 @@ function draw(e) {
 
 }
 
-// canvas.addEventListener("mousemove", draw)
-// canvas.addEventListener("mousedown", (e) => {
-//     isDrawing = true;
-//     lastX = e.offsetX;
-//     lastY = e.offsetY;
-// })
-// canvas.addEventListener("mouseup", () => isDrawing = false)
-// canvas.addEventListener("mouseout", () => isDrawing = false)
+canvas.addEventListener("mousemove", draw)
+canvas.addEventListener("mousedown", (e) => {
+    isDrawing = true;
+    lastX = e.offsetX;
+    lastY = e.offsetY;
+})
+canvas.addEventListener("mouseup", () => isDrawing = false)
+canvas.addEventListener("mouseout", () => isDrawing = false)
 
 //canvas on mobile
 canvas.addEventListener("touchstart", (e) => {
-    console.log(e.touches)
     e.preventDefault();
+    lastX = e.touches[0].clientX;
+    lastY = e.touches[0].clientY;
     isDrawing = true;
-    clientX = e.touches[0].clientX;
-    clientY = e.touches[0].clientY;
-    // isDrawing = true;
-    draw(clientX, clientY)
+    draw(clientX, clientY);
 }, false)
 
 canvas.addEventListener("touchend", (e) => {
-    // console.log(e);
     e.preventDefault();
-    let deltaX;
-    let deltaY;
-    deltaX = e.changedTouches[0].clientX - clientX;
-    deltaY = e.changedTouches[0].clientY - clientY;
+    isDrawing = false;
+}, false);
+
+canvas.addEventListener("touchcancel", (e) => {
+    e.preventDefault();
     isDrawing = false;
 }, false);
 
 canvas.addEventListener("touchmove", (e) => {
-    console.log(e)
     e.preventDefault();
-    let clientX = e.touches[0].clientX;
-    let clientY = e.touches[0].clientY;
-    isDrawing = true;
+    clientX = e.touches[0].clientX;
+    clientY = e.touches[0].clientY;
     draw(clientX, clientY)
 }, false)
+
+//detect touch screen devices
+function isTouchScreendevice() {
+    return ( 'ontouchstart' in window ) ||
+    ( navigator.maxTouchPoints > 0 ) ||
+    ( navigator.msMaxTouchPoints > 0 );      
+};
+
